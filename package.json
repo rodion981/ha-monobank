@@ -1,0 +1,27 @@
+{
+  "name": "monobank-homeassistant",
+  "version": "1.0.0",
+  "description": "Monobank integration for Home Assistant",
+  "main": "custom_components/monobank/__init__.py",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YOUR_USERNAME/monobank-homeassistant.git"
+  },
+  "keywords": [
+    "home-assistant",
+    "monobank",
+    "integration",
+    "hacs",
+    "ukraine",
+    "banking"
+  ],
+  "author": "Rodion Kurilenko",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/YOUR_USERNAME/monobank-homeassistant/issues"
+  },
+  "homepage": "https://github.com/YOUR_USERNAME/monobank-homeassistant#readme"
+}
