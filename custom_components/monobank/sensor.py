@@ -18,6 +18,8 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import (
     ATTRIBUTION,
     CARD_TYPES,
+    CONF_ENABLE_CURRENCY_SENSORS,
+    CONF_ENABLE_JARS,
     CURRENCY_CODES,
     DEFAULT_CURRENCY_PAIRS,
     DOMAIN,
@@ -40,25 +42,35 @@ async def async_setup_entry(
     account_coordinator: MonobankAccountCoordinator = data["account_coordinator"]
     currency_coordinator: MonobankCurrencyCoordinator = data["currency_coordinator"]
 
+    # Get feature toggles from options
+    enable_currency = entry.options.get(CONF_ENABLE_CURRENCY_SENSORS, True)
+    enable_jars = entry.options.get(CONF_ENABLE_JARS, True)
+
     entities: list[SensorEntity] = []
 
-    # Create account sensors
+    # Create account sensors (always enabled)
     for account in account_coordinator.data.get("accounts", []):
         entities.append(MonobankAccountSensor(account_coordinator, account, entry))
 
-    # Create jar sensors
-    for jar in account_coordinator.data.get("jars", []):
-        entities.append(MonobankJarSensor(account_coordinator, jar, entry))
+    # Create jar sensors (if enabled)
+    if enable_jars:
+        for jar in account_coordinator.data.get("jars", []):
+            entities.append(MonobankJarSensor(account_coordinator, jar, entry))
+    else:
+        _LOGGER.debug("Jar sensors disabled in options")
 
-    # Create currency sensors for default pairs
-    for currency_a, currency_b in DEFAULT_CURRENCY_PAIRS:
-        key = f"{currency_a}_{currency_b}"
-        if key in currency_coordinator.data:
-            entities.append(
-                MonobankCurrencySensor(
-                    currency_coordinator, currency_a, currency_b, entry
+    # Create currency sensors (if enabled)
+    if enable_currency:
+        for currency_a, currency_b in DEFAULT_CURRENCY_PAIRS:
+            key = f"{currency_a}_{currency_b}"
+            if key in currency_coordinator.data:
+                entities.append(
+                    MonobankCurrencySensor(
+                        currency_coordinator, currency_a, currency_b, entry
+                    )
                 )
-            )
+    else:
+        _LOGGER.debug("Currency sensors disabled in options")
 
     async_add_entities(entities)
 
