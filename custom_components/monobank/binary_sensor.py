@@ -13,7 +13,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.entity import DeviceInfo, EntityCategory
 
 from .const import ATTRIBUTION, DOMAIN
 from .coordinator import MonobankAccountCoordinator
@@ -77,6 +77,9 @@ class MonobankAPIStatusSensor(CoordinatorEntity, BinarySensorEntity):
 
         # Set entity_id suggestion: binary_sensor.mono_rodion_api_status
         self.entity_id = f"binary_sensor.mono_{user_slug}_api_status"
+
+        # Entity category - Налаштування (CONFIG)
+        self._attr_entity_category = EntityCategory.CONFIG
 
         # Device info - main device (hub)
         self._attr_device_info = DeviceInfo(
