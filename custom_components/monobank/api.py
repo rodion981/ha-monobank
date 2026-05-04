@@ -10,10 +10,13 @@ from aiohttp import ClientError, ClientSession
 
 from .const import (
     API_BASE_URL,
+    API_MAX_RETRIES,
+    API_RETRY_DELAY,
     API_TIMEOUT,
     ENDPOINT_CLIENT_INFO,
     ENDPOINT_CURRENCY,
     ENDPOINT_STATEMENT,
+    ENDPOINT_WEBHOOK,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -57,11 +60,13 @@ class MonobankAPI:
         if self._close_session and self._session:
             await self._session.close()
 
-    async def _request(self, endpoint: str) -> dict[str, Any]:
-        """Make API request.
+    async def _request(self, endpoint: str, method: str = "GET", data: dict[str, Any] | None = None) -> dict[str, Any] | list[dict[str, Any]]:
+        """Make API request with retry logic.
         
         Args:
             endpoint: API endpoint path
+            method: HTTP method (GET, POST, etc.)
+            data: Request data for POST requests
             
         Returns:
             API response data
@@ -76,27 +81,70 @@ class MonobankAPI:
 
         session = await self._get_session()
 
-        try:
-            async with asyncio.timeout(API_TIMEOUT):
-                async with session.get(url, headers=headers) as response:
-                    if response.status == 200:
-                        return await response.json()
-                    
-                    if response.status == 401:
-                        raise MonobankAuthError("Invalid API token")
-                    
-                    if response.status == 429:
-                        raise MonobankRateLimitError("Rate limit exceeded")
-                    
-                    error_text = await response.text()
-                    raise MonobankAPIError(
-                        f"API request failed with status {response.status}: {error_text}"
-                    )
+        for attempt in range(API_MAX_RETRIES):
+            try:
+                async with asyncio.timeout(API_TIMEOUT):
+                    if method == "GET":
+                        async with session.get(url, headers=headers) as response:
+                            return await self._handle_response(response)
+                    elif method == "POST":
+                        async with session.post(url, headers=headers, json=data) as response:
+                            return await self._handle_response(response)
+                    else:
+                        raise MonobankAPIError(f"Unsupported HTTP method: {method}")
 
-        except asyncio.TimeoutError as err:
-            raise MonobankAPIError("Request timeout") from err
-        except ClientError as err:
-            raise MonobankAPIError(f"Request failed: {err}") from err
+            except MonobankAuthError:
+                # Don't retry auth errors
+                raise
+            except MonobankRateLimitError as err:
+                _LOGGER.warning("Rate limit exceeded, attempt %d/%d", attempt + 1, API_MAX_RETRIES)
+                if attempt < API_MAX_RETRIES - 1:
+                    await asyncio.sleep(API_RETRY_DELAY * (attempt + 1))
+                else:
+                    raise
+            except asyncio.TimeoutError as err:
+                _LOGGER.warning("Request timeout, attempt %d/%d", attempt + 1, API_MAX_RETRIES)
+                if attempt < API_MAX_RETRIES - 1:
+                    await asyncio.sleep(API_RETRY_DELAY)
+                else:
+                    raise MonobankAPIError("Request timeout after retries") from err
+            except ClientError as err:
+                _LOGGER.warning("Request failed: %s, attempt %d/%d", err, attempt + 1, API_MAX_RETRIES)
+                if attempt < API_MAX_RETRIES - 1:
+                    await asyncio.sleep(API_RETRY_DELAY)
+                else:
+                    raise MonobankAPIError(f"Request failed after retries: {err}") from err
+
+        raise MonobankAPIError("Max retries exceeded")
+
+    async def _handle_response(self, response: aiohttp.ClientResponse) -> dict[str, Any] | list[dict[str, Any]]:
+        """Handle API response.
+        
+        Args:
+            response: aiohttp response object
+            
+        Returns:
+            Parsed JSON response
+            
+        Raises:
+            MonobankAuthError: Authentication failed
+            MonobankRateLimitError: Rate limit exceeded
+            MonobankAPIError: Other API errors
+        """
+        if response.status == 200:
+            return await response.json()
+        
+        if response.status == 401:
+            raise MonobankAuthError("Invalid API token")
+        
+        if response.status == 429:
+            raise MonobankRateLimitError("Rate limit exceeded")
+        
+        error_text = await response.text()
+        _LOGGER.error("API request failed with status %d: %s", response.status, error_text)
+        raise MonobankAPIError(
+            f"API request failed with status {response.status}: {error_text}"
+        )
 
     async def get_client_info(self) -> dict[str, Any]:
         """Get client information including accounts and jars.
@@ -140,6 +188,18 @@ class MonobankAPI:
         
         _LOGGER.debug("Fetching statement for account %s", account_id)
         return await self._request(endpoint)
+
+    async def set_webhook(self, webhook_url: str) -> dict[str, Any]:
+        """Set webhook URL for receiving transaction notifications.
+        
+        Args:
+            webhook_url: Webhook URL to register
+            
+        Returns:
+            API response
+        """
+        _LOGGER.debug("Setting webhook URL: %s", webhook_url)
+        return await self._request(ENDPOINT_WEBHOOK, method="POST", data={"webHookUrl": webhook_url})
 
     async def validate_token(self) -> bool:
         """Validate API token.
