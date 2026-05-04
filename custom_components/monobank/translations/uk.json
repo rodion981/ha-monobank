@@ -17,5 +17,19 @@
     "abort": {
       "already_configured": "Цей обліковий запис Monobank вже налаштовано."
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Налаштування Monobank",
+        "description": "Налаштуйте параметри інтеграції Monobank",
+        "data": {
+          "update_interval_accounts": "Інтервал оновлення рахунків (секунди)",
+          "update_interval_currency": "Інтервал оновлення курсів валют (секунди)",
+          "enable_currency_sensors": "Увімкнути сенсори курсів валют",
+          "enable_jars": "Увімкнути сенсори банок (цілей накопичення)"
+        }
+      }
+    }
   }
 }
