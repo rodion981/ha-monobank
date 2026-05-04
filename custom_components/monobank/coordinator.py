@@ -11,8 +11,8 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from .api import MonobankAPI, MonobankAPIError, MonobankRateLimitError
 from .const import (
     DOMAIN,
-    UPDATE_INTERVAL_ACCOUNTS,
-    UPDATE_INTERVAL_CURRENCY,
+    DEFAULT_UPDATE_INTERVAL_ACCOUNTS,
+    DEFAULT_UPDATE_INTERVAL_CURRENCY,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -41,6 +41,17 @@ class MonobankCoordinator(DataUpdateCoordinator):
             update_interval=timedelta(seconds=update_interval),
         )
         self.api = api
+        self._update_interval_seconds = update_interval
+
+    def update_interval_seconds(self, interval: int) -> None:
+        """Update the polling interval.
+        
+        Args:
+            interval: New interval in seconds
+        """
+        self._update_interval_seconds = interval
+        self.update_interval = timedelta(seconds=interval)
+        _LOGGER.info("Update interval changed to %d seconds", interval)
 
     async def _async_update_data(self) -> dict[str, Any]:
         """Fetch data from API."""
@@ -50,9 +61,9 @@ class MonobankCoordinator(DataUpdateCoordinator):
 class MonobankAccountCoordinator(MonobankCoordinator):
     """Coordinator for account and jar data."""
 
-    def __init__(self, hass: HomeAssistant, api: MonobankAPI) -> None:
+    def __init__(self, hass: HomeAssistant, api: MonobankAPI, update_interval: int | None = None) -> None:
         """Initialize account coordinator."""
-        super().__init__(hass, api, UPDATE_INTERVAL_ACCOUNTS)
+        super().__init__(hass, api, update_interval or DEFAULT_UPDATE_INTERVAL_ACCOUNTS)
 
     async def _async_update_data(self) -> dict[str, Any]:
         """Fetch account and jar data from API.
@@ -61,6 +72,7 @@ class MonobankAccountCoordinator(MonobankCoordinator):
             Dictionary with accounts and jars data
         """
         try:
+            _LOGGER.debug("Fetching account and jar data")
             data = await self.api.get_client_info()
             
             return {
@@ -81,9 +93,9 @@ class MonobankAccountCoordinator(MonobankCoordinator):
 class MonobankCurrencyCoordinator(MonobankCoordinator):
     """Coordinator for currency rates data."""
 
-    def __init__(self, hass: HomeAssistant, api: MonobankAPI) -> None:
+    def __init__(self, hass: HomeAssistant, api: MonobankAPI, update_interval: int | None = None) -> None:
         """Initialize currency coordinator."""
-        super().__init__(hass, api, UPDATE_INTERVAL_CURRENCY)
+        super().__init__(hass, api, update_interval or DEFAULT_UPDATE_INTERVAL_CURRENCY)
 
     async def _async_update_data(self) -> dict[str, Any]:
         """Fetch currency rates from API.
@@ -92,6 +104,7 @@ class MonobankCurrencyCoordinator(MonobankCoordinator):
             Dictionary with currency rates indexed by currency pair
         """
         try:
+            _LOGGER.debug("Fetching currency rates")
             rates = await self.api.get_currency_rates()
             
             # Index rates by currency pair for easy lookup
