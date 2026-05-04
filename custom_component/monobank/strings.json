@@ -1,0 +1,35 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up Monobank",
+        "description": "Enter your Monobank API token. You can get it from https://api.monobank.ua/",
+        "data": {
+          "api_token": "API Token"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid API token. Please check your token and try again.",
+      "cannot_connect": "Cannot connect to Monobank API. Please try again later.",
+      "unknown": "Unexpected error occurred. Please try again."
+    },
+    "abort": {
+      "already_configured": "This Monobank account is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Monobank Options",
+        "description": "Configure Monobank integration settings",
+        "data": {
+          "update_interval_accounts": "Update interval for accounts (seconds)",
+          "update_interval_currency": "Update interval for currency rates (seconds)",
+          "enable_currency_sensors": "Enable currency rate sensors",
+          "enable_jars": "Enable jar (savings goals) sensors"
+        }
+      }
+    }
+  }
+}
