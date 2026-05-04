@@ -1,0 +1,21 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Налаштування Monobank",
+        "description": "Введіть ваш API токен Monobank. Ви можете отримати його на https://api.monobank.ua/",
+        "data": {
+          "api_token": "API Токен"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Невірний API токен. Будь ласка, перевірте токен і спробуйте знову.",
+      "cannot_connect": "Не вдається підключитися до API Monobank. Спробуйте пізніше.",
+      "unknown": "Сталася неочікувана помилка. Спробуйте знову."
+    },
+    "abort": {
+      "already_configured": "Цей обліковий запис Monobank вже налаштовано."
+    }
+  }
+}
