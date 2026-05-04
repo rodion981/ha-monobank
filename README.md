@@ -11,9 +11,15 @@
 - 💳 **Рахунки**: Відстеження балансу всіх ваших карток Monobank
 - 🏦 **Банки (Цілі)**: Моніторинг прогресу накопичень у банках
 - 💱 **Курси валют**: Актуальні курси USD, EUR, GBP та інших валют
-- 🔄 **Автоматичне оновлення**: Дані оновлюються кожні 60 секунд для рахунків та 5 хвилин для курсів
+- 🔄 **Автоматичне оновлення**: Налаштовувані інтервали оновлення (за замовчуванням 60 сек для рахунків, 5 хв для курсів)
+- 🔔 **Webhook підтримка**: Миттєві оновлення при транзакціях (опціонально)
+- 🔘 **Ручне оновлення**: Кнопка для примусового оновлення даних
+- 📊 **Статус API**: Сенсор для моніторингу доступності API
+- ⚙️ **Налаштування через UI**: Повна конфігурація через інтерфейс Home Assistant
+- 🎛️ **Feature toggles**: Можливість вимкнути сенсори валют або банок
 - 🌐 **Локалізація**: Підтримка української та англійської мов
-- ⚙️ **UI конфігурація**: Проста настройка через інтерфейс Home Assistant
+- 🔁 **Retry логіка**: Автоматичні повторні спроби при помилках API
+- 🛡️ **Надійність**: Graceful обробка помилок та rate limits
 
 ### Встановлення
 
@@ -34,12 +40,26 @@
 
 ### Налаштування
 
+#### Початкова конфігурація
+
 1. Отримайте API токен на https://api.monobank.ua/
 2. В Home Assistant перейдіть в **Settings** → **Devices & Services**
 3. Натисніть **+ Add Integration**
 4. Знайдіть **Monobank**
 5. Введіть ваш API токен
 6. Натисніть **Submit**
+
+#### Додаткові налаштування (Options)
+
+Після встановлення ви можете налаштувати інтеграцію:
+
+1. Перейдіть в **Settings** → **Devices & Services**
+2. Знайдіть **Monobank** та натисніть **Configure**
+3. Доступні опції:
+   - **Інтервал оновлення рахунків** (30-3600 сек, за замовчуванням 60)
+   - **Інтервал оновлення курсів валют** (60-3600 сек, за замовчуванням 300)
+   - **Увімкнути сенсори курсів валют** (так/ні)
+   - **Увімкнути сенсори банок** (так/ні)
 
 ### Сенсори
 
@@ -49,6 +69,8 @@
 - `sensor.monobank_black_xxxx` - Баланс чорної картки
 - `sensor.monobank_white_xxxx` - Баланс білої картки
 - `sensor.monobank_diia_xxxx` - Баланс картки Дія
+- `sensor.monobank_eaid_xxxx` - Баланс картки єПідтримка
+- `sensor.monobank_madeinukraine_xxxx` - Баланс картки Made in Ukraine
 - та інші...
 
 **Атрибути:**
@@ -79,6 +101,17 @@
 - `rate_sell` - Курс продажу
 - `last_update` - Час останнього оновлення
 
+#### Статус API
+- `binary_sensor.monobank_api_status` - Статус доступності API
+
+**Атрибути:**
+- `last_update_success` - Чи успішне останнє оновлення
+- `last_error` - Текст останньої помилки (якщо є)
+- `last_success_time` - Час останнього успішного оновлення
+
+#### Кнопки
+- `button.monobank_refresh` - Кнопка для ручного оновлення даних
+
 ### Приклади використання
 
 #### Lovelace картка для відображення балансу
@@ -91,6 +124,10 @@ entities:
     name: Чорна картка
   - entity: sensor.monobank_white_8944
     name: Біла картка
+  - entity: binary_sensor.monobank_api_status
+    name: Статус API
+  - entity: button.monobank_refresh
+    name: Оновити дані
 ```
 
 #### Картка з курсами валют
@@ -136,11 +173,47 @@ automation:
           message: "Вітаємо! Ви досягли цілі накопичення!"
 ```
 
+#### Автоматизація при помилці API
+
+```yaml
+automation:
+  - alias: "Monobank API недоступний"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.monobank_api_status
+        to: "off"
+        for:
+          minutes: 5
+    action:
+      - service: notify.mobile_app
+        data:
+          message: "Monobank API недоступний більше 5 хвилин!"
+```
+
+### Webhook підтримка
+
+Інтеграція автоматично реєструє webhook для отримання миттєвих оновлень від Monobank API. Webhook URL автоматично реєструється при встановленні інтеграції.
+
+**Переваги webhook:**
+- Миттєві оновлення при транзакціях
+- Зменшення навантаження на API
+- Більш актуальні дані
+
+**Примітка:** Webhook працює паралельно з polling, тому дані будуть оновлюватись як при транзакціях, так і за розкладом.
+
 ### Обмеження API
 
 Monobank API має наступні обмеження:
 - Максимум 60 запитів на хвилину
 - Інтеграція автоматично дотримується цих обмежень
+- При перевищенні ліміту інтеграція автоматично повторює запити з затримкою
+
+### Безпека
+
+- API токен зберігається в зашифрованому вигляді
+- Webhook використовує унікальний ID для кожної інсталяції
+- Всі з'єднання використовують HTTPS
+- Токен ніколи не логується в відкритому вигляді
 
 ### Структура файлів
 
@@ -149,10 +222,14 @@ custom_components/monobank/
 ├── __init__.py           # Ініціалізація інтеграції
 ├── manifest.json         # Метадані
 ├── config_flow.py        # UI конфігурація
+├── options_flow.py       # UI налаштувань
 ├── const.py              # Константи
 ├── coordinator.py        # Координатор оновлення даних
 ├── sensor.py             # Сенсори
+├── binary_sensor.py      # Бінарні сенсори
+├── button.py             # Кнопки
 ├── api.py                # API клієнт
+├── webhook.py            # Webhook обробка
 ├── strings.json          # Переклади
 └── translations/
     ├── en.json           # Англійська локалізація
@@ -176,9 +253,15 @@ MIT License
 - 💳 **Accounts**: Track balances of all your Monobank cards
 - 🏦 **Jars (Goals)**: Monitor savings progress in jars
 - 💱 **Currency Rates**: Current rates for USD, EUR, GBP and other currencies
-- 🔄 **Auto-update**: Data refreshes every 60 seconds for accounts and 5 minutes for rates
+- 🔄 **Auto-update**: Configurable update intervals (default 60s for accounts, 5min for rates)
+- 🔔 **Webhook support**: Instant updates on transactions (optional)
+- 🔘 **Manual refresh**: Button to force data update
+- 📊 **API Status**: Sensor to monitor API availability
+- ⚙️ **UI Configuration**: Full configuration through Home Assistant interface
+- 🎛️ **Feature toggles**: Ability to disable currency or jar sensors
 - 🌐 **Localization**: Ukrainian and English language support
-- ⚙️ **UI Configuration**: Easy setup through Home Assistant interface
+- 🔁 **Retry logic**: Automatic retries on API errors
+- 🛡️ **Reliability**: Graceful error handling and rate limit management
 
 ### Installation
 
@@ -199,12 +282,26 @@ MIT License
 
 ### Configuration
 
+#### Initial Setup
+
 1. Get your API token from https://api.monobank.ua/
 2. In Home Assistant go to **Settings** → **Devices & Services**
 3. Click **+ Add Integration**
 4. Search for **Monobank**
 5. Enter your API token
 6. Click **Submit**
+
+#### Additional Settings (Options)
+
+After installation, you can configure the integration:
+
+1. Go to **Settings** → **Devices & Services**
+2. Find **Monobank** and click **Configure**
+3. Available options:
+   - **Account update interval** (30-3600 sec, default 60)
+   - **Currency update interval** (60-3600 sec, default 300)
+   - **Enable currency rate sensors** (yes/no)
+   - **Enable jar sensors** (yes/no)
 
 ### Sensors
 
@@ -214,6 +311,8 @@ After configuration, the integration will create the following sensors:
 - `sensor.monobank_black_xxxx` - Black card balance
 - `sensor.monobank_white_xxxx` - White card balance
 - `sensor.monobank_diia_xxxx` - Diia card balance
+- `sensor.monobank_eaid_xxxx` - єПідтримка card balance
+- `sensor.monobank_madeinukraine_xxxx` - Made in Ukraine card balance
 - and others...
 
 **Attributes:**
@@ -244,6 +343,17 @@ After configuration, the integration will create the following sensors:
 - `rate_sell` - Sell rate
 - `last_update` - Last update time
 
+#### API Status
+- `binary_sensor.monobank_api_status` - API availability status
+
+**Attributes:**
+- `last_update_success` - Whether last update was successful
+- `last_error` - Last error text (if any)
+- `last_success_time` - Time of last successful update
+
+#### Buttons
+- `button.monobank_refresh` - Button to manually refresh data
+
 ### Usage Examples
 
 #### Lovelace card for balance display
@@ -256,6 +366,10 @@ entities:
     name: Black Card
   - entity: sensor.monobank_white_8944
     name: White Card
+  - entity: binary_sensor.monobank_api_status
+    name: API Status
+  - entity: button.monobank_refresh
+    name: Refresh Data
 ```
 
 #### Currency rates card
@@ -301,11 +415,47 @@ automation:
           message: "Congratulations! You've reached your savings goal!"
 ```
 
+#### API error automation
+
+```yaml
+automation:
+  - alias: "Monobank API Unavailable"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.monobank_api_status
+        to: "off"
+        for:
+          minutes: 5
+    action:
+      - service: notify.mobile_app
+        data:
+          message: "Monobank API has been unavailable for more than 5 minutes!"
+```
+
+### Webhook Support
+
+The integration automatically registers a webhook to receive instant updates from Monobank API. The webhook URL is automatically registered during integration setup.
+
+**Webhook benefits:**
+- Instant updates on transactions
+- Reduced API load
+- More up-to-date data
+
+**Note:** Webhook works in parallel with polling, so data will be updated both on transactions and on schedule.
+
 ### API Limitations
 
 Monobank API has the following limitations:
 - Maximum 60 requests per minute
 - The integration automatically respects these limits
+- On rate limit exceeded, the integration automatically retries with delay
+
+### Security
+
+- API token is stored encrypted
+- Webhook uses unique ID for each installation
+- All connections use HTTPS
+- Token is never logged in plain text
 
 ### Support
 
