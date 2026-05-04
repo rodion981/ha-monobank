@@ -8,12 +8,13 @@ import voluptuous as vol
 
 from homeassistant import config_entries
 from homeassistant.const import CONF_NAME
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .api import MonobankAPI, MonobankAuthError, MonobankAPIError
 from .const import CONF_API_TOKEN, DOMAIN
+from .options_flow import MonobankOptionsFlowHandler
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -58,6 +59,14 @@ class MonobankConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Monobank."""
 
     VERSION = 1
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(
+        config_entry: config_entries.ConfigEntry,
+    ) -> MonobankOptionsFlowHandler:
+        """Get the options flow for this handler."""
+        return MonobankOptionsFlowHandler(config_entry)
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
