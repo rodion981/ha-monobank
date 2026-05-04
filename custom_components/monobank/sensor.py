@@ -15,7 +15,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.entity import DeviceInfo, EntityCategory
 
 from .const import (
     ATTRIBUTION,
@@ -139,14 +139,16 @@ class MonobankAccountSensor(CoordinatorEntity, SensorEntity):
         currency_slug = "" if currency == "UAH" else f"_{currency.lower()}"
         self.entity_id = f"sensor.mono_{user_slug}_{card_type_slug}{currency_slug}_{masked_pan[-4:]}"
 
-        # Device info - separate device for cards
+        # Entity category - Картки (None = main sensors)
+        self._attr_entity_category = None
+
+        # Device info - single device for all entities
         self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, f"{client_id}_cards")},
-            name=f"Monobank - {user_name} - Картки",
+            identifiers={(DOMAIN, client_id)},
+            name=f"Monobank - {user_name}",
             manufacturer="Monobank",
-            model="Cards",
+            model="Personal Account",
             entry_type="service",
-            via_device=(DOMAIN, client_id),
         )
 
     @property
@@ -236,14 +238,16 @@ class MonobankJarSensor(CoordinatorEntity, SensorEntity):
         jar_slug = slugify(jar_title)
         self.entity_id = f"sensor.mono_{user_slug}_jar_{jar_slug}"
 
-        # Device info - separate device for jars
+        # Entity category - Банки (None = main sensors)
+        self._attr_entity_category = None
+
+        # Device info - single device for all entities
         self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, f"{client_id}_jars")},
-            name=f"Monobank - {user_name} - Банки",
+            identifiers={(DOMAIN, client_id)},
+            name=f"Monobank - {user_name}",
             manufacturer="Monobank",
-            model="Jars",
+            model="Personal Account",
             entry_type="service",
-            via_device=(DOMAIN, client_id),
         )
 
     @property
@@ -339,6 +343,9 @@ class MonobankCurrencySensor(CoordinatorEntity, SensorEntity):
         currency_b_slug = currency_b_name.lower()
         self.entity_id = f"sensor.mono_{user_slug}_{currency_a_slug}_{currency_b_slug}"
 
+        # Entity category - Курси валют (None = main sensors)
+        self._attr_entity_category = None
+
         # Device info - we'll set this in a property to access hass.data
         self._entry = entry
 
@@ -354,14 +361,13 @@ class MonobankCurrencySensor(CoordinatorEntity, SensorEntity):
             user_name = "Monobank User"
             client_id = self._entry.entry_id
 
-        # Separate device for currency rates
+        # Single device for all entities
         return DeviceInfo(
-            identifiers={(DOMAIN, f"{client_id}_currency")},
-            name=f"Monobank - {user_name} - Курси валют",
+            identifiers={(DOMAIN, client_id)},
+            name=f"Monobank - {user_name}",
             manufacturer="Monobank",
-            model="Currency Rates",
+            model="Personal Account",
             entry_type="service",
-            via_device=(DOMAIN, client_id),
         )
 
     @property
