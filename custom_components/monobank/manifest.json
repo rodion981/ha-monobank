@@ -1,0 +1,12 @@
+{
+  "domain": "monobank",
+  "name": "Monobank",
+  "codeowners": ["@rodion"],
+  "config_flow": true,
+  "documentation": "https://github.com/rodion/monobank-homeassistant",
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/rodion/monobank-homeassistant/issues",
+  "requirements": [],
+  "version": "1.0.0"
+}

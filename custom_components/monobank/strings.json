@@ -1,0 +1,21 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up Monobank",
+        "description": "Enter your Monobank API token. You can get it from https://api.monobank.ua/",
+        "data": {
+          "api_token": "API Token"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid API token. Please check your token and try again.",
+      "cannot_connect": "Cannot connect to Monobank API. Please try again later.",
+      "unknown": "Unexpected error occurred. Please try again."
+    },
+    "abort": {
+      "already_configured": "This Monobank account is already configured."
+    }
+  }
+}
