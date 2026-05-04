@@ -9,7 +9,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.entity import DeviceInfo, EntityCategory
 
 from .const import ATTRIBUTION, DOMAIN
 from .coordinator import MonobankAccountCoordinator
@@ -71,6 +71,9 @@ class MonobankRefreshButton(CoordinatorEntity, ButtonEntity):
 
         # Set entity_id suggestion: button.mono_rodion_refresh
         self.entity_id = f"button.mono_{user_slug}_refresh"
+
+        # Entity category - Налаштування (CONFIG)
+        self._attr_entity_category = EntityCategory.CONFIG
 
         # Device info - main device (hub)
         self._attr_device_info = DeviceInfo(
