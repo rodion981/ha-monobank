@@ -17,5 +17,19 @@
     "abort": {
       "already_configured": "This Monobank account is already configured."
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Monobank Options",
+        "description": "Configure Monobank integration settings",
+        "data": {
+          "update_interval_accounts": "Update interval for accounts (seconds)",
+          "update_interval_currency": "Update interval for currency rates (seconds)",
+          "enable_currency_sensors": "Enable currency rate sensors",
+          "enable_jars": "Enable jar (savings goals) sensors"
+        }
+      }
+    }
   }
 }
