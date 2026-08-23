@@ -5,7 +5,7 @@
 1. Перейдіть на https://github.com та увійдіть в свій акаунт
 2. Натисніть на кнопку **"New"** (або **"+"** → **"New repository"**)
 3. Заповніть форму:
-   - **Repository name:** `monobank-homeassistant`
+   - **Repository name:** `ha-monobank`
    - **Description:** `Monobank integration for Home Assistant`
    - **Public** (щоб можна було використовувати з HACS)
    - ✅ Add a README file - **НЕ ставте галочку** (у нас вже є README)
@@ -36,8 +36,8 @@ git add .
 # Створити перший commit
 git commit -m "Initial commit - Monobank integration v1.0.0"
 
-# Додати remote репозиторій (замініть YOUR_USERNAME на ваш GitHub username)
-git remote add origin https://github.com/YOUR_USERNAME/monobank-homeassistant.git
+# Додати remote репозиторій
+git remote add origin https://github.com/rodion981/ha-monobank.git
 
 # Перейменувати гілку на main (якщо потрібно)
 git branch -M main
@@ -73,7 +73,7 @@ git push -u origin main
 2. Натисніть на **три крапки** (⋮) в правому верхньому куті
 3. Виберіть **"Custom repositories"**
 4. Додайте:
-   - **Repository:** `https://github.com/YOUR_USERNAME/monobank-homeassistant`
+   - **Repository:** `https://github.com/rodion981/ha-monobank`
    - **Category:** `Integration`
 5. Натисніть **"Add"**
 6. Знайдіть **"Monobank"** в списку інтеграцій HACS
@@ -120,7 +120,7 @@ git push -u origin main
 
 Якщо виникли проблеми:
 1. Перевірте логи Home Assistant: **Settings** → **System** → **Logs**
-2. Створіть issue на GitHub: https://github.com/YOUR_USERNAME/monobank-homeassistant/issues
+2. Створіть issue на GitHub: https://github.com/rodion981/ha-monobank/issues
 
 ## Корисні посилання
 

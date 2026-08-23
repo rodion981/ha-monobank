@@ -192,7 +192,7 @@ automation:
 
 ### Webhook підтримка
 
-Інтеграція автоматично реєструє webhook для отримання миттєвих оновлень від Monobank API. Webhook URL автоматично реєструється при встановленні інтеграції.
+Інтеграція автоматично реєструє webhook для отримання миттєвих оновлень від Monobank API. Для його роботи Home Assistant повинен мати доступну з інтернету HTTPS-адресу.
 
 **Переваги webhook:**
 - Миттєві оновлення при транзакціях
@@ -210,7 +210,7 @@ Monobank API має наступні обмеження:
 
 ### Безпека
 
-- API токен зберігається в зашифрованому вигляді
+- API-токен зберігається локально в config entry Home Assistant; захистіть доступ до системи та резервних копій
 - Webhook використовує унікальний ID для кожної інсталяції
 - Всі з'єднання використовують HTTPS
 - Токен ніколи не логується в відкритому вигляді
@@ -254,7 +254,7 @@ MIT License
 - 🏦 **Jars (Goals)**: Monitor savings progress in jars
 - 💱 **Currency Rates**: Current rates for USD, EUR, GBP and other currencies
 - 🔄 **Auto-update**: Configurable update intervals (default 60s for accounts, 5min for rates)
-- 🔔 **Webhook support**: Instant updates on transactions (optional)
+- 🔔 **Webhook support**: Automatic instant updates on transactions
 - 🔘 **Manual refresh**: Button to force data update
 - 📊 **API Status**: Sensor to monitor API availability
 - ⚙️ **UI Configuration**: Full configuration through Home Assistant interface
@@ -434,7 +434,7 @@ automation:
 
 ### Webhook Support
 
-The integration automatically registers a webhook to receive instant updates from Monobank API. The webhook URL is automatically registered during integration setup.
+The integration automatically registers a webhook to receive instant updates from Monobank API. Home Assistant must have an internet-accessible HTTPS URL for it to work.
 
 **Webhook benefits:**
 - Instant updates on transactions
@@ -452,7 +452,7 @@ Monobank API has the following limitations:
 
 ### Security
 
-- API token is stored encrypted
+- The API token is stored locally in the Home Assistant config entry; protect access to the system and its backups
 - Webhook uses unique ID for each installation
 - All connections use HTTPS
 - Token is never logged in plain text

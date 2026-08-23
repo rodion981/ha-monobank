@@ -1,14 +1,14 @@
 {
-  "name": "monobank-homeassistant",
-  "version": "1.0.0",
+  "name": "ha-monobank",
+  "version": "1.1.0",
   "description": "Monobank integration for Home Assistant",
   "main": "custom_components/monobank/__init__.py",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "python -m unittest discover -s tests -v"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/YOUR_USERNAME/monobank-homeassistant.git"
+    "url": "git+https://github.com/rodion981/ha-monobank.git"
   },
   "keywords": [
     "home-assistant",
@@ -21,7 +21,7 @@
   "author": "Rodion Kurilenko",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/YOUR_USERNAME/monobank-homeassistant/issues"
+    "url": "https://github.com/rodion981/ha-monobank/issues"
   },
-  "homepage": "https://github.com/YOUR_USERNAME/monobank-homeassistant#readme"
+  "homepage": "https://github.com/rodion981/ha-monobank#readme"
 }

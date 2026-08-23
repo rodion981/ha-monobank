@@ -15,7 +15,7 @@
 ### Крок 1: Створіть новий репозиторій
 1. Перейдіть на https://github.com/new
 2. Заповніть:
-   - **Repository name:** `monobank-homeassistant`
+   - **Repository name:** `ha-monobank`
    - **Description:** `Monobank integration for Home Assistant`
    - Виберіть **Public**
    - **НЕ** ставте галочки на README, .gitignore, License
@@ -87,7 +87,7 @@
 1. Відкрийте **HACS** в Home Assistant
 2. Натисніть **⋮** (три крапки) → **Custom repositories**
 3. Додайте:
-   - **Repository:** `https://github.com/ВАШ_USERNAME/monobank-homeassistant`
+   - **Repository:** `https://github.com/rodion981/ha-monobank`
    - **Category:** `Integration`
 4. Натисніть **"Add"**
 5. Закрийте вікно
@@ -154,7 +154,7 @@
 - 🔧 Детальна інструкція: [INSTALLATION.md](INSTALLATION.md)
 - 📋 План розробки: [INTEGRATION_PLAN.md](INTEGRATION_PLAN.md)
 - 🔑 API токен: https://api.monobank.ua/
-- 💬 GitHub Issues: `https://github.com/ВАШ_USERNAME/monobank-homeassistant/issues`
+- 💬 GitHub Issues: `https://github.com/rodion981/ha-monobank/issues`
 
 ---
 

@@ -144,6 +144,3 @@ OZW_Log.txt
 secrets.yaml
 known_devices.yaml
 
-# Test files
-test_*.py
-*_test.py
