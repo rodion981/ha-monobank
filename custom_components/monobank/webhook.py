@@ -9,8 +9,6 @@ from aiohttp import web
 from homeassistant.components import webhook
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import config_entry_oauth2_flow
-
 from .const import CONF_WEBHOOK_ID, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
@@ -44,7 +42,8 @@ async def async_setup_webhook(hass: HomeAssistant, entry: ConfigEntry) -> str:
     )
     
     webhook_url = webhook.async_generate_url(hass, webhook_id)
-    _LOGGER.info("Webhook registered: %s", webhook_url)
+    # The URL contains the webhook ID and must not be written to normal logs.
+    _LOGGER.debug("Monobank webhook registered")
     
     return webhook_url
 

@@ -17,7 +17,7 @@ MIN_UPDATE_INTERVAL_CURRENCY = 60  # Minimum 1 minute
 # API endpoints
 ENDPOINT_CLIENT_INFO = "/personal/client-info"
 ENDPOINT_CURRENCY = "/bank/currency"
-ENDPOINT_STATEMENT = "/personal/statement/{account}/{from}/{to}"
+ENDPOINT_STATEMENT = "/personal/statement/{account}/{from_}/{to}"
 ENDPOINT_WEBHOOK = "/personal/webhook"
 
 # Configuration

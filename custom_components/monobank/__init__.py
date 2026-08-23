@@ -52,8 +52,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # Set up webhook
     try:
         webhook_url = await async_setup_webhook(hass, entry)
-        _LOGGER.info("Webhook URL: %s", webhook_url)
-        
         # Register webhook with Monobank API
         try:
             await api.set_webhook(webhook_url)
@@ -83,24 +81,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 async def async_update_options(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Handle options update."""
     _LOGGER.info("Options updated, reloading integration")
-    
-    # Get coordinators
-    data = hass.data[DOMAIN][entry.entry_id]
-    account_coordinator: MonobankAccountCoordinator = data["account_coordinator"]
-    currency_coordinator: MonobankCurrencyCoordinator = data["currency_coordinator"]
-
-    # Update intervals if changed
-    account_interval = entry.options.get(
-        CONF_UPDATE_INTERVAL_ACCOUNTS, DEFAULT_UPDATE_INTERVAL_ACCOUNTS
-    )
-    currency_interval = entry.options.get(
-        CONF_UPDATE_INTERVAL_CURRENCY, DEFAULT_UPDATE_INTERVAL_CURRENCY
-    )
-
-    account_coordinator.update_interval_seconds(account_interval)
-    currency_coordinator.update_interval_seconds(currency_interval)
-
-    # Reload the config entry to apply feature toggles
     await hass.config_entries.async_reload(entry.entry_id)
 
 

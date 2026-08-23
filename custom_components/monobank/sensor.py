@@ -15,7 +15,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from homeassistant.helpers.entity import DeviceInfo, EntityCategory
+from homeassistant.helpers.entity import DeviceInfo
 
 from .const import (
     ATTRIBUTION,
@@ -25,9 +25,6 @@ from .const import (
     CURRENCY_CODES,
     DEFAULT_CURRENCY_PAIRS,
     DOMAIN,
-    SENSOR_TYPE_ACCOUNT,
-    SENSOR_TYPE_CURRENCY,
-    SENSOR_TYPE_JAR,
 )
 from .coordinator import MonobankAccountCoordinator, MonobankCurrencyCoordinator
 
@@ -325,8 +322,6 @@ class MonobankCurrencySensor(CoordinatorEntity, SensorEntity):
 
         # Get user name and client_id for device info from account coordinator
         # Note: Currency coordinator doesn't have user data, so we get it from hass.data
-        from homeassistant.core import HomeAssistant
-        
         # Set unique ID
         self._attr_unique_id = f"{entry.entry_id}_currency_{self._key}"
 
