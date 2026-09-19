@@ -1,10 +1,29 @@
-# Monobank Integration for Home Assistant
+# Monobank
+
+Додавайте рахунки Monobank, банки, курси валют і статус API до Home Assistant.
+
+[![GitHub Release](https://img.shields.io/github/v/release/rodion981/ha-monobank?display_name=tag&sort=semver)](https://github.com/rodion981/ha-monobank/releases)
+[![HACS](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://hacs.xyz/)
+[![License](https://img.shields.io/github/license/rodion981/ha-monobank)](./LICENSE)
 
 [English](./README.md) | [**Українською**](./README.uk.md)
 
+## Швидке встановлення
+
+1. Відкрийте цей репозиторій у HACS кнопкою нижче та встановіть інтеграцію.
+2. Перезапустіть Home Assistant.
+3. Натисніть **Add Integration**, щоб запустити налаштування інтеграції.
+
+[![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=rodion981&repository=ha-monobank&category=integration)
+
+[![Add Integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=monobank)
+
+> [!NOTE]
+> Для кнопки HACS потрібен встановлений HACS. Кнопка Add Integration працюватиме після завантаження кастомної інтеграції та перезапуску Home Assistant.
+
 Кастомна інтеграція Monobank для Home Assistant, яка дозволяє відстежувати баланси рахунків, банок (цілей) та курси валют.
 
-### Можливості
+## Можливості
 
 - 💳 **Рахунки**: Відстеження балансу всіх ваших карток Monobank
 - 🏦 **Банки (Цілі)**: Моніторинг прогресу накопичень у банках
@@ -19,9 +38,9 @@
 - 🔁 **Повторні спроби**: Автоматичні повторні спроби при помилках API
 - 🛡️ **Надійність**: Коректна обробка помилок і лімітів API
 
-### Встановлення
+## Встановлення
 
-#### Метод 1: HACS (рекомендовано)
+### Метод 1: HACS (рекомендовано)
 
 1. Відкрийте HACS в Home Assistant
 2. Перейдіть в розділ "Integrations"
@@ -31,14 +50,14 @@
 6. Категорія: Integration
 7. Знайдіть "Monobank" в списку та встановіть
 
-#### Метод 2: Ручне встановлення
+### Метод 2: Ручне встановлення
 
 1. Скопіюйте папку `custom_components/monobank` до папки `custom_components` вашого Home Assistant
 2. Перезапустіть Home Assistant
 
-### Налаштування
+## Налаштування
 
-#### Початкова конфігурація
+### Початкова конфігурація
 
 1. Отримайте API токен на https://api.monobank.ua/
 2. В Home Assistant перейдіть в **Settings** → **Devices & Services**
@@ -47,7 +66,7 @@
 5. Введіть ваш API токен
 6. Натисніть **Submit**
 
-#### Додаткові налаштування (Options)
+### Додаткові налаштування (Options)
 
 Після встановлення ви можете налаштувати інтеграцію:
 
@@ -59,11 +78,11 @@
    - **Увімкнути сенсори курсів валют** (так/ні)
    - **Увімкнути сенсори банок** (так/ні)
 
-### Сенсори
+## Сенсори
 
 Після налаштування інтеграція створить наступні сенсори:
 
-#### Рахунки
+### Рахунки
 - `sensor.monobank_black_xxxx` - Баланс чорної картки
 - `sensor.monobank_white_xxxx` - Баланс білої картки
 - `sensor.monobank_diia_xxxx` - Баланс картки Дія
@@ -79,7 +98,7 @@
 - `credit_limit` - Кредитний ліміт
 - `cashback_type` - Тип кешбеку
 
-#### Банки (Цілі)
+### Банки (Цілі)
 - `sensor.monobank_jar_name` - Баланс банки
 
 **Атрибути:**
@@ -89,7 +108,7 @@
 - `progress` - Прогрес у відсотках
 - `currency` - Валюта
 
-#### Курси валют
+### Курси валют
 - `sensor.monobank_usd_uah` - Курс долара
 - `sensor.monobank_eur_uah` - Курс євро
 - `sensor.monobank_gbp_uah` - Курс фунта
@@ -99,7 +118,7 @@
 - `rate_sell` - Курс продажу
 - `last_update` - Час останнього оновлення
 
-#### Статус API
+### Статус API
 - `binary_sensor.monobank_api_status` - Статус доступності API
 
 **Атрибути:**
@@ -107,12 +126,12 @@
 - `last_error` - Текст останньої помилки (якщо є)
 - `last_success_time` - Час останнього успішного оновлення
 
-#### Кнопки
+### Кнопки
 - `button.monobank_refresh` - Кнопка для ручного оновлення даних
 
-### Приклади використання
+## Приклади використання
 
-#### Lovelace картка для відображення балансу
+### Lovelace картка для відображення балансу
 
 ```yaml
 type: entities
@@ -128,7 +147,7 @@ entities:
     name: Оновити дані
 ```
 
-#### Картка з курсами валют
+### Картка з курсами валют
 
 ```yaml
 type: entities
@@ -142,7 +161,7 @@ entities:
     secondary_info: last-updated
 ```
 
-#### Автоматизація при низькому балансі
+### Автоматизація при низькому балансі
 
 ```yaml
 automation:
@@ -157,7 +176,7 @@ automation:
           message: "Баланс на чорній картці менше 100 грн!"
 ```
 
-#### Автоматизація при досягненні цілі в банці
+### Автоматизація при досягненні цілі в банці
 
 ```yaml
 automation:
@@ -171,7 +190,7 @@ automation:
           message: "Вітаємо! Ви досягли цілі накопичення!"
 ```
 
-#### Автоматизація при помилці API
+### Автоматизація при помилці API
 
 ```yaml
 automation:
@@ -188,7 +207,7 @@ automation:
           message: "Monobank API недоступний більше 5 хвилин!"
 ```
 
-### Webhook підтримка
+## Webhook підтримка
 
 Інтеграція автоматично реєструє webhook для отримання миттєвих оновлень від Monobank API. Для його роботи Home Assistant повинен мати доступну з інтернету HTTPS-адресу.
 
@@ -199,21 +218,21 @@ automation:
 
 **Примітка:** Webhook працює паралельно з polling, тому дані будуть оновлюватись як при транзакціях, так і за розкладом.
 
-### Обмеження API
+## Обмеження API
 
 Monobank API має наступні обмеження:
 - Максимум 60 запитів на хвилину
 - Інтеграція автоматично дотримується цих обмежень
 - При перевищенні ліміту інтеграція автоматично повторює запити з затримкою
 
-### Безпека
+## Безпека
 
 - API-токен зберігається локально в config entry Home Assistant; захистіть доступ до системи та резервних копій
 - Webhook використовує унікальний ID для кожної інсталяції
 - Всі з'єднання використовують HTTPS
 - Токен ніколи не логується у відкритому вигляді
 
-### Структура файлів
+## Структура файлів
 
 ```
 custom_components/monobank/
@@ -234,10 +253,10 @@ custom_components/monobank/
     └── uk.json           # Українська локалізація
 ```
 
-### Підтримка
+## Підтримка
 
 Якщо у вас виникли проблеми або є пропозиції, створіть issue в цьому репозиторії.
 
-### Ліцензія
+## Ліцензія
 
 MIT License
