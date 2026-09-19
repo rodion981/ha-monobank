@@ -1,11 +1,30 @@
-# Monobank Integration for Home Assistant
+# Monobank
+
+Bring Monobank accounts, jars, exchange rates, and API status into Home Assistant.
+
+[![GitHub Release](https://img.shields.io/github/v/release/rodion981/ha-monobank?display_name=tag&sort=semver)](https://github.com/rodion981/ha-monobank/releases)
+[![HACS](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://hacs.xyz/)
+[![License](https://img.shields.io/github/license/rodion981/ha-monobank)](./LICENSE)
 
 [**English**](./README.md) | [Українською](./README.uk.md)
+
+## Quick install
+
+1. Open this repository in HACS using the button below and download the integration.
+2. Restart Home Assistant.
+3. Use **Add Integration** to start the setup flow.
+
+[![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=rodion981&repository=ha-monobank&category=integration)
+
+[![Add Integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=monobank)
+
+> [!NOTE]
+> The HACS button requires HACS to be installed. The Add Integration button works after the custom integration has been downloaded and Home Assistant restarted.
 
 Custom Monobank integration for Home Assistant that lets you track account balances, jars (goals), and currency exchange rates.
 
 
-### Features
+## Features
 
 - 💳 **Accounts**: Track balances of all your Monobank cards
 - 🏦 **Jars (Goals)**: Monitor savings progress in jars
@@ -20,9 +39,9 @@ Custom Monobank integration for Home Assistant that lets you track account balan
 - 🔁 **Retry logic**: Automatic retries on API errors
 - 🛡️ **Reliability**: Graceful error handling and rate limit management
 
-### Installation
+## Installation
 
-#### Method 1: HACS (recommended)
+### Method 1: HACS (recommended)
 
 1. Open HACS in Home Assistant
 2. Go to "Integrations"
@@ -32,14 +51,14 @@ Custom Monobank integration for Home Assistant that lets you track account balan
 6. Category: Integration
 7. Find "Monobank" in the list and install
 
-#### Method 2: Manual Installation
+### Method 2: Manual Installation
 
 1. Copy the `custom_components/monobank` folder to your Home Assistant `custom_components` folder
 2. Restart Home Assistant
 
-### Configuration
+## Configuration
 
-#### Initial Setup
+### Initial Setup
 
 1. Get your API token from https://api.monobank.ua/
 2. In Home Assistant go to **Settings** → **Devices & Services**
@@ -48,7 +67,7 @@ Custom Monobank integration for Home Assistant that lets you track account balan
 5. Enter your API token
 6. Click **Submit**
 
-#### Additional Settings (Options)
+### Additional Settings (Options)
 
 After installation, you can configure the integration:
 
@@ -60,11 +79,11 @@ After installation, you can configure the integration:
    - **Enable currency rate sensors** (yes/no)
    - **Enable jar sensors** (yes/no)
 
-### Sensors
+## Sensors
 
 After configuration, the integration will create the following sensors:
 
-#### Accounts
+### Accounts
 - `sensor.monobank_black_xxxx` - Black card balance
 - `sensor.monobank_white_xxxx` - White card balance
 - `sensor.monobank_diia_xxxx` - Diia card balance
@@ -80,7 +99,7 @@ After configuration, the integration will create the following sensors:
 - `credit_limit` - Credit limit
 - `cashback_type` - Cashback type
 
-#### Jars (Goals)
+### Jars (Goals)
 - `sensor.monobank_jar_name` - Jar balance
 
 **Attributes:**
@@ -90,7 +109,7 @@ After configuration, the integration will create the following sensors:
 - `progress` - Progress percentage
 - `currency` - Currency
 
-#### Currency Rates
+### Currency Rates
 - `sensor.monobank_usd_uah` - USD rate
 - `sensor.monobank_eur_uah` - EUR rate
 - `sensor.monobank_gbp_uah` - GBP rate
@@ -100,7 +119,7 @@ After configuration, the integration will create the following sensors:
 - `rate_sell` - Sell rate
 - `last_update` - Last update time
 
-#### API Status
+### API Status
 - `binary_sensor.monobank_api_status` - API availability status
 
 **Attributes:**
@@ -108,12 +127,12 @@ After configuration, the integration will create the following sensors:
 - `last_error` - Last error text (if any)
 - `last_success_time` - Time of last successful update
 
-#### Buttons
+### Buttons
 - `button.monobank_refresh` - Button to manually refresh data
 
-### Usage Examples
+## Usage Examples
 
-#### Lovelace card for balance display
+### Lovelace card for balance display
 
 ```yaml
 type: entities
@@ -129,7 +148,7 @@ entities:
     name: Refresh Data
 ```
 
-#### Currency rates card
+### Currency rates card
 
 ```yaml
 type: entities
@@ -143,7 +162,7 @@ entities:
     secondary_info: last-updated
 ```
 
-#### Low balance automation
+### Low balance automation
 
 ```yaml
 automation:
@@ -158,7 +177,7 @@ automation:
           message: "Black card balance is below 100 UAH!"
 ```
 
-#### Goal reached automation
+### Goal reached automation
 
 ```yaml
 automation:
@@ -172,7 +191,7 @@ automation:
           message: "Congratulations! You've reached your savings goal!"
 ```
 
-#### API error automation
+### API error automation
 
 ```yaml
 automation:
@@ -189,7 +208,7 @@ automation:
           message: "Monobank API has been unavailable for more than 5 minutes!"
 ```
 
-### Webhook Support
+## Webhook Support
 
 The integration automatically registers a webhook to receive instant updates from Monobank API. Home Assistant must have an internet-accessible HTTPS URL for it to work.
 
@@ -200,14 +219,14 @@ The integration automatically registers a webhook to receive instant updates fro
 
 **Note:** Webhook works in parallel with polling, so data will be updated both on transactions and on schedule.
 
-### API Limitations
+## API Limitations
 
 Monobank API has the following limitations:
 - Maximum 60 requests per minute
 - The integration automatically respects these limits
 - On rate limit exceeded, the integration automatically retries with delay
 
-### Security
+## Security
 
 - The API token is stored locally in the Home Assistant config entry; protect access to the system and its backups
 - Webhook uses unique ID for each installation
@@ -215,7 +234,7 @@ Monobank API has the following limitations:
 - Token is never logged in plain text
 
 
-### File Structure
+## File Structure
 
 ```text
 custom_components/monobank/
@@ -236,10 +255,10 @@ custom_components/monobank/
     └── uk.json           # Ukrainian localization
 ```
 
-### Support
+## Support
 
 If you encounter any issues or have suggestions, please create an issue in this repository.
 
-### License
+## License
 
 MIT License
