@@ -5,6 +5,7 @@ Bring Monobank accounts, jars, exchange rates, and API status into Home Assistan
 [![GitHub Release](https://img.shields.io/github/v/release/rodion981/ha-monobank?display_name=tag&sort=semver)](https://github.com/rodion981/ha-monobank/releases)
 [![HACS](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://hacs.xyz/)
 [![License](https://img.shields.io/github/license/rodion981/ha-monobank)](./LICENSE)
+[![Support via monobank](https://img.shields.io/badge/Support-monobank-black)](https://send.monobank.ua/jar/9jqG7oXrZG)
 
 [**English**](./README.md) | [Українською](./README.uk.md)
 
@@ -256,6 +257,8 @@ custom_components/monobank/
 ```
 
 ## Support
+
+If this project is useful to you, you can support its development via [monobank](https://send.monobank.ua/jar/9jqG7oXrZG).
 
 If you encounter any issues or have suggestions, please create an issue in this repository.
 
